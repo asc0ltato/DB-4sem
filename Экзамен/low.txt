@@ -1,0 +1,147 @@
+select * from v$sga_dynamic_components;
+select * from v$sga;
+
+select * from v$parameter;
+
+select * from v$controlfile;
+create pfile = 'pfile.ora' from spfile;
+create spfile = 'spfile.ora' from pfile;
+show parameter spfile;
+
+create table person(
+id number primary key,
+name varchar(20)
+);
+select * from user_segments where segment_name = 'PERSON';
+insert into person values (1, 'один');
+insert into person values (2, 'два');
+
+select * from v$process;
+select * from v$process where background is null;
+select * from v$bgprocess;
+
+select * from dba_tablespaces;
+select * from dba_data_files;
+
+select * from dba_roles;
+
+select * from dba_role_privs where grantee = 'SYS';
+
+select * from dba_users;
+
+alter session set "_oracle_script" = true;
+create role new_zss_user;
+grant create session, create table, drop any table, create view, drop any view,
+create procedure, drop any procedure to new_zss_user;
+
+create user new_zss_users identified by 111
+account unlock
+password expire;
+
+select * from dba_profiles;
+
+select * from dba_profiles where profile = 'DEFAULT';
+
+create profile new_zss_profile limit
+SESSIONS_PER_USER 3
+IDLE_TIME 30
+CONNECT_TIME 180
+FAILED_LOGIN_ATTEMPTS 3
+PASSWORD_LIFE_TIME 365
+PASSWORD_REUSE_TIME 10
+PASSWORD_LOCK_TIME 1;
+
+create sequence S1
+start with 1000
+increment by 10
+maxvalue 10000
+minvalue 0
+cycle
+cache 30
+order;
+create table T1 (
+t1 number,
+t2 number,
+t3 number
+);
+insert into T1 values (s1.nextval,s1.nextval,s1.nextval);
+insert into T1 values (s1.nextval,s1.nextval,s1.nextval);
+--До 10
+select * from T1;
+
+create public synonym public_synonym for T1;
+create synonym private_synonym for T1;
+select * from public_synonym;
+select * from private_synonym;
+select * from user_synonyms;
+select * from dba_synonyms where synonym_name = 'PUBLIC_SYNONYM';
+
+declare tess T1%ROWTYPE;
+begin
+—select * into tess from T1 where t2 = 255;
+select * into tess from T1;
+exception
+when no_data_found
+then dbms_output.put_line('no data found');
+when too_many_rows
+then dbms_output.put_line('too many rows');
+end;
+
+select * from v$logfile;
+
+select * from v$log where status = 'CURRENT';
+
+select * from v$controlfile;
+
+create table t2 (
+x number
+);
+declare n number :=0;
+begin
+while (n < 100)
+loop
+insert into t2 values (n);
+n := n + 1;
+end loop;
+end;
+select * from user_tables where table_name = 'T2';
+
+select * from dba_segments where tablespace_name = 'SYSTEM';
+
+select * from all_objects where owner = 'SYS';
+
+select count(blocks) as QUANTITY_BLOCKS from user_segments where segment_name = 'PERSON';
+
+select * from v$session;
+
+select * from v$database;
+select * from v$instance;
+
+create view zss_view as select * from T1 where t1 in (select t1 from T1 where t1 !='1000');
+select * from zss_view;
+drop view zss_view
+
+create materialized view mama
+BUILD IMMEDIATE
+AS SELECT id, name from person;
+select * from mama;
+
+create database link ZSSLINK
+connect to User2_Zjuk
+identified by "111111"
+using '80.94.168.150:1521/ora12w';
+insert into T2@ZSSLINK values(1000);
+select * from T2@ZSSLINK;
+
+begin
+begin
+raise_application_error(-200001, 'Rised error');
+exception
+when others
+then dbms_output.put_line('First block ' || sqlerrm);
+raise;
+end;
+exception
+when others
+then dbms_output.put_line('Second block ' || sqlerrm);
+end;

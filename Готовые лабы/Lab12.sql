@@ -1,0 +1,221 @@
+--1.Добавьте в таблицу TEACHERS два столбца BIRTHDAY и SALARY, заполните их значениями.
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
+ALTER TABLE TEACHER ADD BIRTHDAY DATE;
+ALTER TABLE TEACHER ADD SALARY DECIMAL(10,2);
+
+UPDATE TEACHER SET BIRTHDAY = '12-02-1959', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'СМЛВ';
+UPDATE TEACHER SET BIRTHDAY = '30-01-1987', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'АКНВЧ';
+UPDATE TEACHER SET BIRTHDAY = '19-04-1991', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'КЛСНВ';
+UPDATE TEACHER SET BIRTHDAY = '16-04-1964', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ГРМН';
+UPDATE TEACHER SET BIRTHDAY = '19-11-1988', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЛЩНК';
+UPDATE TEACHER SET BIRTHDAY = '05-10-1966', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'БРКВЧ';
+UPDATE TEACHER SET BIRTHDAY = '10-08-1976', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ДДК';
+UPDATE TEACHER SET BIRTHDAY = '11-09-1989', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'КБЛ';
+UPDATE TEACHER SET BIRTHDAY = '24-12-1983', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'УРБ';
+UPDATE TEACHER SET BIRTHDAY = '03-06-1990', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'РМНК';
+UPDATE TEACHER SET BIRTHDAY = '10-05-1970', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ПСТВЛВ';
+UPDATE TEACHER SET BIRTHDAY = '26-10-1999', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = '?';
+UPDATE TEACHER SET BIRTHDAY = '30-07-1984', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ГРН';
+UPDATE TEACHER SET BIRTHDAY = '11-03-1975', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЖЛК';
+UPDATE TEACHER SET BIRTHDAY = '12-07-1969', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'БРТШВЧ';
+UPDATE TEACHER SET BIRTHDAY = '26-02-1983', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЮДНКВ';
+UPDATE TEACHER SET BIRTHDAY = '13-12-1991', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'БРНВСК';
+UPDATE TEACHER SET BIRTHDAY = '20-01-1968', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'НВРВ';
+UPDATE TEACHER SET BIRTHDAY = '21-12-1969', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'РВКЧ';
+UPDATE TEACHER SET BIRTHDAY = '28-01-1975', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ДМДК';
+UPDATE TEACHER SET BIRTHDAY = '10-07-1983', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'МШКВСК';
+UPDATE TEACHER SET BIRTHDAY = '08-10-1988', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЛБХ';
+UPDATE TEACHER SET BIRTHDAY = '30-07-1984', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЗВГЦВ';
+UPDATE TEACHER SET BIRTHDAY = '16-04-1964', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'БЗБРДВ';
+UPDATE TEACHER SET BIRTHDAY = '12-05-1985', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ПРКПЧК';
+UPDATE TEACHER SET BIRTHDAY = '20-10-1980', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'НСКВЦ';
+UPDATE TEACHER SET BIRTHDAY = '21-08-1990', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'МХВ';
+UPDATE TEACHER SET BIRTHDAY = '13-08-1966', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЕЩНК';
+UPDATE TEACHER SET BIRTHDAY = '11-11-1978', 
+SALARY = TRUNC(DBMS_RANDOM.VALUE(500, 2001), 2) WHERE TEACHER = 'ЖРСК';
+
+SELECT * FROM TEACHER;
+
+ALTER TABLE TEACHER DROP COLUMN BIRTHDAY;
+ALTER TABLE TEACHER DROP COLUMN SALARY;
+--2.Получите список преподавателей в виде Фамилия И.О. для преподавателей, 
+--родившихся в понедельник.
+SELECT UPPER(REGEXP_SUBSTR(TEACHER_NAME, '(\S+)', 1, 1) || ' ' ||
+SUBSTR(REGEXP_SUBSTR(TEACHER_NAME, '(\S+)', 1, 2), 1, 1) || '. ' ||
+SUBSTR(REGEXP_SUBSTR(TEACHER_NAME, '(\S+)', 1, 3), 1, 1) || '. ') AS ФИО, BIRTHDAY
+FROM TEACHER WHERE TO_CHAR((BIRTHDAY), 'D') = 1;
+
+--3.Создайте представление, в котором поместите список преподавателей, которые
+--родились в следующем месяце и выведите их даты рождения в формате «DD/MM/YYYY».
+CREATE VIEW NEXT_MONTH_TEACHER AS
+SELECT TEACHER_NAME, TO_CHAR(BIRTHDAY,'DD/MM/YYYY') AS BIRTH FROM TEACHER
+WHERE TO_CHAR(SYSDATE, 'MM') + 1 = TO_CHAR(BIRTHDAY, 'MM');
+
+SELECT * FROM NEXT_MONTH_TEACHER;
+
+DROP VIEW NEXT_MONTH_TEACHER;
+--4.Создайте представление, в котором поместите количество преподавателей, 
+--которые родились в каждом месяце, название месяца указать словом.
+CREATE VIEW EVERY_BIRTH AS
+SELECT TO_CHAR(BIRTHDAY,'Month') AS Месяц, COUNT(*) AS Количество
+FROM TEACHER GROUP BY TO_CHAR(BIRTHDAY,'Month') ORDER BY Количество desc;
+
+SELECT * FROM EVERY_BIRTH;
+
+DROP VIEW EVERY_BIRTH;
+--5.Создать курсор и вывести список преподавателей, у которых в следующем году
+--юбилей с указанием, сколько лет исполняется.
+DECLARE
+CURSOR c1 IS
+SELECT TEACHER_NAME , TO_CHAR(BIRTHDAY, 'DD/MM/YYYY') AS BIRTHDAY, to_number ((to_char(sysdate, 'YYYY') - to_char(BIRTHDAY, 'YYYY') + 1)) AS AGE FROM TEACHER
+WHERE MOD((to_char(sysdate, 'YYYY') - to_char(BIRTHDAY, 'YYYY') + 1), 5) = 0;
+BEGIN
+    FOR i IN c1
+    LOOP
+        dbms_output.put_line(i.teacher_name || ' ' || i.age);
+    END LOOP;
+END;
+
+--6.Создать курсор и вывести среднюю заработную плату по кафедрам с округлением 
+--вниз до целых, вывести средние итоговые значения для каждого факультета и для
+--всех факультетов в целом.
+DECLARE
+    CURSOR AVG_CURS 
+    IS SELECT FACULTY.FACULTY, FLOOR(AVG(TEACHER.SALARY)) , PULPIT.PULPIT FROM TEACHER
+    INNER JOIN PULPIT ON PULPIT.PULPIT = TEACHER.PULPIT
+    INNER JOIN FACULTY ON FACULTY.FACULTY = PULPIT.FACULTY
+    GROUP BY ROLLUP(FACULTY.FACULTY ,PULPIT.PULPIT);
+    AVEG TEACHER.SALARY%TYPE;
+    FAC FACULTY.FACULTY%TYPE;
+    PULP PULPIT.PULPIT%TYPE;
+BEGIN
+    OPEN AVG_CURS;
+    FETCH AVG_CURS INTO FAC , AVEG ,PULP;
+    WHILE AVG_CURS%FOUND
+        LOOP
+            DBMS_OUTPUT.PUT_LINE(NVL(RTRIM(FAC),' ') || ' ' || RTRIM(PULP) || ' : ' || AVEG);
+            FETCH AVG_CURS INTO FAC , AVEG ,PULP;
+        END LOOP;
+    CLOSE AVG_CURS;
+END;
+
+--7.Создать неименованный блок для расчета результата деления двух переменных. 
+--Добавить обработку ситуации с делением на 0 через исключение ZERO_DIVIDE. 
+--Сгенерировать пользовательскую ошибку при значении делителя 0.
+DECLARE
+    my_exception EXCEPTION;
+    NUM1 NUMBER;
+    NUM2 NUMBER;
+    RESULT NUMBER;
+BEGIN
+    NUM1 := 10;
+    NUM2 := 0;
+    IF NUM2 = 0 then raise my_exception;
+    end if;
+    RESULT := NUM1 / NUM2;
+    DBMS_OUTPUT.PUT_LINE('RESULT: ' || RESULT);
+    EXCEPTION
+    when my_exception then
+    dbms_output.put_line('NUM2 IS 0');
+    WHEN zero_divide THEN
+    dbms_output.put_line('ZERO_DIVIDE: '||sqlerrm);
+END;
+
+--8. Создать неименованный блок с командой SELECT…INTO для выбора наименования 
+--преподавателя по заданному коду. Добавить обработку исключения NO_DATA_FOUND 
+--с выводом информации 'Преподаватель не найден!'. Проверить, что произойдет 
+--при переопределении исключения.
+DECLARE
+    CODE TEACHER.TEACHER%TYPE;
+    T TEACHER%ROWTYPE;
+    NO_DATA_FOUND EXCEPTION;
+BEGIN
+    CODE := 'Мау';
+    SELECT * INTO T FROM TEACHER WHERE TEACHER = CODE;
+    dbms_output.put_line('TEACHER_NAME: ' || T.TEACHER_NAME);
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+    dbms_output.put_line('Преподаватель не найден!');
+    WHEN OTHERS THEN
+    dbms_output.put_line('NO_DATA_FOUND!');
+END;
+
+--9. Создать основной и вложенный блок. Объявить в них исключения с разными 
+--именами, связать с кодом ошибки -20 001 с помощью PRAGMA EXCEPTION_INIT. 
+--Сгенерировать исключение во вложенном блоке, обработать его в основном. 
+--Проверить ситуацию, когда исключения не связаны с кодом ошибки и имеют 
+--одинаковое наименование.
+DECLARE
+    EX1 EXCEPTION;
+    PRAGMA EXCEPTION_INIT(EX1,-20001);
+    EX2 EXCEPTION;
+    PRAGMA EXCEPTION_INIT(EX2 , -20001);
+BEGIN
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('BLOCK-2');
+        RAISE EX2;
+    END;
+    DBMS_OUTPUT.PUT_LINE('BLOCK-1');
+    EXCEPTION
+    WHEN EX2 THEN
+    DBMS_OUTPUT.PUT_LINE('BLOCK-1 —-> EX2');
+END;
+
+DECLARE
+    EX1 EXCEPTION;
+BEGIN
+    DECLARE
+    EX1 EXCEPTION;
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('BLOCK-2');
+        RAISE EX1;
+        EXCEPTION
+        WHEN EX1 THEN
+        DBMS_OUTPUT.PUT_LINE('BLOCK-2 —-> EX1');
+    END;
+    DBMS_OUTPUT.PUT_LINE('BLOCK-1');
+    RAISE EX1;
+    EXCEPTION
+    WHEN EX1 THEN
+    DBMS_OUTPUT.PUT_LINE('BLOCK-1 —-> EX2');
+END;
+
+--10.Проверить, генерируются ли исключение NO_DATA_FOUND в команде SELECT…INTO 
+--в PL/SQL блоке с использованием групповых функций, например MAX.
+DECLARE
+    S TEACHER.SALARY%TYPE;
+BEGIN
+    SELECT MAX(SALARY) INTO S FROM TEACHER WHERE TEACHER = 'Уау';
+    dbms_output.put_line('MAX: ' || S);
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+    dbms_output.put_line('NO MAX VALUE');
+END;
